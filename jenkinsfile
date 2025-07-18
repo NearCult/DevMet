@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+
+    environment {
+        VERCEL_TOKEN = credentials('vercel-token')
+    }
+
+    stages {
+        stage('Clone') {
+            steps {
+                dir('devmet') {
+                    git branch: 'main',
+                        url: 'git@github.com:NearCult/DevMet.git'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'corepack enable'
+                sh 'pnpm install'
+                sh 'pnpm run build'
+            }
+        }
+        stage('Lint') {
+            steps {
+                sh 'pnpm lint'
+            }
+        }
+        stage('Build in Docker') {
+            steps {
+                dir('devmet') {
+                    script {
+                        docker.image('node:18').inside {
+                            sh 'corepack enable'
+                            sh 'pnpm install'
+                            sh './scripts/build.sh'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Lint and Test') {
+            steps {
+                dir('devmet') {
+                    script {
+                        docker.image('node:18').inside {
+                            sh 'corepack enable'
+                            sh 'pnpm lint'
+                            sh 'pnpm test'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Vercel') {
+            steps {
+                dir('devmet') {
+                    script {
+                        docker.image('node:18').inside {
+                            sh 'corepack enable'
+                            sh 'pnpm install -g vercel'
+                            sh 'vercel --token=$VERCEL_TOKEN --prod --confirm'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
