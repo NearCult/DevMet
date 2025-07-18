@@ -1,0 +1,22 @@
+{
+  "name": "devmet",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "check-types": "turbo run check-types"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0",
+    "eslint": "^9",
+    "postcss": "^8",
+    "tailwindcss": "^4",
+    "autoprefixer": "^10"
+  }
+}
