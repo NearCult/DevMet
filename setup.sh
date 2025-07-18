@@ -3,6 +3,5 @@
 
 set -e
 
-cd DevMet
 git submodule update --init --recursive
 npx pnpm install
