@@ -1,0 +1,6 @@
+*.sh text eol=lf
+*.ts text
+*.tsx text
+*.js text
+*.json text
+.gitmodules text eol=lf
